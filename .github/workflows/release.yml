@@ -1,0 +1,48 @@
+name: Release Timecop
+
+on:
+  push:
+    tags:
+    - 'v*'
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build project
+        id: build_release
+        run: |
+          export VERSION=$(echo ${{ github.ref }} | sed -e 's/[^0-9\.]//g')
+          sed -i '' 's/version = "0.1.0"/version = "'${VERSION}'"/' Cargo.toml
+          cargo build --release
+          echo ::set-output name=VERSION::${VERSION}
+      - name: Archive
+        run: |
+          cp LICENSE ./target/release/LICENSE
+          cp README.md ./target/release/README.md
+          mkdir -p ./target/release/bin
+          cp ./target/release/timecop ./target/release/bin/timecop
+          tar -C ./target/release -zcvf release.tar.gz README.md LICENSE bin/timecop
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release.tar.gz
+          asset_name: timecop-${{ steps.build_release.outputs.VERSION }}-darwin.tar.gz
+          asset_content_type: application/gzip

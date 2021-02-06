@@ -1,0 +1,17 @@
+[package]
+name = "timecop"
+version = "0.1.0"
+authors = ["Max <code@workwithmax.com>"]
+edition = "2018"
+
+[dependencies]
+num = "0.3.1"
+git2 = "0.13.17"
+termion = "1.5"
+sqlite = "0.25.3"
+home = "0.5.3"
+chrono = "0.4.19"
+dialoguer = "0.7.1"
+clap = "2.33.3"
+textwrap = "0.13.2"
+csv = "1.1.5"
