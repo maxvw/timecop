@@ -29,6 +29,8 @@ pub fn exec<'a>(
         Some(task) => Some(task),
     };
 
+    utils::info_msg_compact("Task:", &task.as_ref().unwrap().name);
+
     // Either use the last commit message, or prompt the user for a message
     let last_commit = get_last_commit_message();
     let message = if matches.is_present("commit") {
