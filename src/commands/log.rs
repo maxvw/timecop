@@ -13,7 +13,7 @@ pub fn exec<'a>(
     matches: ArgMatches<'a>,
 ) -> Result<State<'a>, Box<dyn error::Error>> {
     // Make sure we have an active project
-    if let None = state.project {
+    if state.project.is_none() {
         utils::error_msg("No Project Found", "Timecop requires a project to be defined before you can start\r\nusing timecop to log entries, first run: $ timecop init");
         std::process::exit(1);
     }
@@ -63,7 +63,7 @@ fn create_or_select_task(project: &Project) -> Option<Task> {
     let branch = get_branch();
 
     // Is this a first-time experience or not?
-    if tasks.len() == 0 {
+    if tasks.is_empty() {
         options.push("Create your first task");
     } else {
         options.push("Create a new task");
@@ -94,9 +94,7 @@ fn create_or_select_task(project: &Project) -> Option<Task> {
             }
         }
         Ok(n) => {
-            if options.len() == 4 && n != 3 {
-                std::process::exit(0)
-            } else if options.len() == 3 && n != 2 {
+            if (options.len() == 4 && n != 3) || (options.len() == 3 && n != 2) {
                 std::process::exit(0)
             }
 
@@ -162,11 +160,7 @@ fn prompt_message(default: String, initial: String) -> String {
 
     // With \e as a message it will open an external editor (or at least try to)
     if message == "\\e" {
-        if let Some(updated_message) = Editor::new()
-            .require_save(false)
-            .edit(&default.clone())
-            .unwrap()
-        {
+        if let Some(updated_message) = Editor::new().require_save(false).edit(&default).unwrap() {
             prompt_message(default, updated_message)
         } else {
             message
@@ -186,5 +180,5 @@ fn prompt_minutes() -> usize {
 fn get_branch() -> String {
     let repo = utils::get_current_repo().unwrap();
     let (_remote, branch) = utils::get_repo_remote_and_branch(repo).unwrap();
-    return branch;
+    branch
 }

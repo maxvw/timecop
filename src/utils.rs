@@ -34,7 +34,7 @@ pub fn get_repo_remote_and_branch(repo: git2::Repository) -> Option<(String, Str
     };
 
     // Return the remote and branch
-    return Some((remote, branch));
+    Some((remote, branch))
 }
 
 pub fn ensure_valid_repo() -> Option<(String, String)> {
@@ -45,7 +45,7 @@ pub fn ensure_valid_repo() -> Option<(String, String)> {
     };
 
     // Nope, no repository found?
-    if let None = remote_and_branch {
+    if remote_and_branch.is_none() {
         error_msg(
             "No Repository Found",
             "Timecop requires the directory you are currently in to be a git\r\nrepository, with a valid upstream and active branch.",
@@ -58,21 +58,13 @@ pub fn ensure_valid_repo() -> Option<(String, String)> {
 
 // Convert date from SQLite to NaiveDate
 pub fn sql_to_date(input: Option<&str>) -> Result<NaiveDate, ParseError> {
-    let date = match input {
-        Some(result) => result,
-        None => "",
-    };
-
+    let date = input.unwrap_or("");
     NaiveDate::parse_from_str(date, "%Y-%m-%d %H:%M:%S")
 }
 
 // Convert datetime from SQLite to NaiveDateTime
 pub fn sql_to_datetime(input: Option<&str>) -> Result<NaiveDateTime, ParseError> {
-    let datetime = match input {
-        Some(result) => result,
-        None => "",
-    };
-
+    let datetime = input.unwrap_or("");
     NaiveDateTime::parse_from_str(datetime, "%Y-%m-%d %H:%M:%S")
 }
 

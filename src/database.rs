@@ -1,5 +1,3 @@
-use home;
-use sqlite;
 use std::cell::{Ref, RefCell};
 use std::path::PathBuf;
 
@@ -86,11 +84,9 @@ where
         Ref::map(db_conn.borrow(), |borrow| {
             let connection = borrow.as_ref().unwrap();
             f(connection);
-            return borrow;
+            borrow
         });
     });
-
-    return;
 }
 
 // This function will see if there is an active connection with
@@ -103,19 +99,19 @@ fn maybe_open_db() {
     // figured out how yet.
     DBCONN.with(|db_conn| {
         Ref::map(db_conn.borrow(), |borrow| {
-            if let None = borrow {
+            if borrow.is_none() {
                 connected = false;
             } else {
                 connected = true;
             }
 
-            return borrow;
+            borrow
         });
     });
 
     // Now we are no longer borrowing the connection, we can
     // open the database if we weren't using it yet.
-    if connected == false {
+    if !connected {
         open_db();
     }
 }
@@ -184,6 +180,4 @@ fn run_migration(db: &sqlite::Connection, migration_id: usize) {
         Ok(_) => true,
         Err(err) => panic!("Logging the migration failed:\r\n{:?}", err),
     };
-
-    return;
 }

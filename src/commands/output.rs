@@ -12,7 +12,7 @@ pub fn exec<'a>(
     matches: ArgMatches<'a>,
 ) -> Result<State<'a>, Box<dyn error::Error>> {
     // Make sure we have an active project
-    if let None = state.project {
+    if state.project.is_none() {
         utils::error_msg("No Project Found", "Timecop requires a project to be defined before you can start\r\nusing timecop to log entries, first run: $ timecop init");
         std::process::exit(1);
     }
@@ -33,7 +33,7 @@ pub fn exec<'a>(
 
 fn display_summary(summary: Summary, detailed: bool) {
     utils::info_msg_compact("Project Summary:", &summary.name);
-    println!("");
+    println!();
 
     for day in summary.days {
         let day_name = format!("{}", day.date.format("%A"));
@@ -72,7 +72,7 @@ fn display_summary(summary: Summary, detailed: bool) {
                 );
             }
         }
-        println!("");
+        println!();
     }
 }
 

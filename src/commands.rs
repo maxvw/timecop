@@ -21,7 +21,7 @@ pub fn exec(state: State) -> Result<State, Box<dyn std::error::Error>> {
     }
 }
 
-fn subcommand_name<'a>(matches: &ArgMatches<'a>) -> Result<String, Box<dyn std::error::Error>> {
+fn subcommand_name(matches: &ArgMatches) -> Result<String, Box<dyn std::error::Error>> {
     match matches.subcommand_name() {
         Some(name) => Ok(name.to_string()),
         None => Err("Failed to get subcommand name".into()),
@@ -30,7 +30,7 @@ fn subcommand_name<'a>(matches: &ArgMatches<'a>) -> Result<String, Box<dyn std::
 
 fn subcommand_matches<'a>(
     matches: &ArgMatches<'a>,
-    subcommand: &String,
+    subcommand: &str,
 ) -> Result<ArgMatches<'a>, Box<dyn std::error::Error>> {
     match matches.subcommand_matches(subcommand) {
         Some(matches) => Ok(matches.clone()),
