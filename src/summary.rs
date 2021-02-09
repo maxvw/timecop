@@ -3,7 +3,6 @@ use crate::project::Project;
 use crate::utils;
 
 use chrono::NaiveDate;
-use sqlite;
 use std::vec::Vec;
 
 #[derive(Debug)]
@@ -71,11 +70,11 @@ pub fn for_project(project: &Project) -> Summary {
         results = process_summary(cursor);
     });
 
-    return Summary {
-        id: project.id.clone(),
+    Summary {
+        id: project.id,
         name: project.name.to_string(),
         days: results,
-    };
+    }
 }
 
 fn process_summary(mut cursor: sqlite::Cursor) -> Vec<SummarizedDay> {
@@ -91,12 +90,12 @@ fn process_summary(mut cursor: sqlite::Cursor) -> Vec<SummarizedDay> {
         if last_index > 0 {
             let previous = &mut results[last_index - 1];
             if previous.date == summary.date {
-                previous.minutes = previous.minutes + summary.minutes;
+                previous.minutes += summary.minutes;
                 let last_task_index = previous.tasks.len();
                 if last_task_index > 0 {
                     let previous_task = &mut previous.tasks[last_task_index - 1];
                     if previous_task.id == task_summary.id {
-                        previous_task.minutes = previous_task.minutes + task_entry.minutes;
+                        previous_task.minutes += task_entry.minutes;
                         previous_task.entries.push(task_entry);
                     } else {
                         task_summary.minutes = task_entry.minutes;
@@ -121,32 +120,35 @@ fn process_summary(mut cursor: sqlite::Cursor) -> Vec<SummarizedDay> {
             results.push(summary);
         }
     }
-    return results;
+
+    results
 }
 
 fn process_summary_day(row: &[sqlite::Value]) -> SummarizedDay {
     let minutes = row[3].as_integer().unwrap() as usize;
     let date = utils::sql_to_date(row[4].as_string()).unwrap();
-    return SummarizedDay {
+
+    SummarizedDay {
         date,
         minutes,
         tasks: Vec::new(),
-    };
+    }
 }
 
 fn process_summary_task(row: &[sqlite::Value]) -> SummarizedTask {
     let id = row[0].as_integer().unwrap() as usize;
     let name = row[1].as_string().unwrap().to_string();
-    return SummarizedTask {
+
+    SummarizedTask {
         id,
         name,
         minutes: 0,
         entries: Vec::new(),
-    };
+    }
 }
 
 fn process_summary_task_entry(row: &[sqlite::Value]) -> SummarizedTaskEntry {
     let name = row[2].as_string().unwrap().to_string();
     let minutes = row[3].as_integer().unwrap() as usize;
-    return SummarizedTaskEntry { name, minutes };
+    SummarizedTaskEntry { name, minutes }
 }

@@ -42,7 +42,7 @@ fn create_or_select_project() -> Option<Project> {
     let (remote, _) = utils::ensure_valid_repo().unwrap();
 
     // Is this a first-time experience or not?
-    if projects.len() == 0 {
+    if projects.is_empty() {
         options.push("Create your first project");
     } else {
         options.push("Create a new project");
@@ -126,7 +126,7 @@ exec <&-
 
 fn install_git_hook() {
     let repo = utils::get_current_repo();
-    if let None = repo {
+    if repo.is_none() {
         return;
     }
 
@@ -151,9 +151,8 @@ fn install_git_hook() {
     };
 
     // Write the hook contents
-    match file.write_all(hook_data().as_bytes()) {
-        Err(why) => panic!("failed to create git hook: {}", why),
-        Ok(_) => {}
+    if let Err(why) = file.write_all(hook_data().as_bytes()) {
+        panic!("failed to create git hook: {}", why);
     }
 
     // Make it executable for the user

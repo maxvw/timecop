@@ -1,8 +1,6 @@
 use crate::database;
 use crate::utils;
 
-use sqlite;
-
 pub fn set_ignore_flag() {
     let remote_branch = get_remote_branch();
 
@@ -58,7 +56,7 @@ pub fn get_ignore_flag() -> bool {
         }
     });
 
-    return result;
+    result
 }
 
 fn get_remote_branch() -> String {

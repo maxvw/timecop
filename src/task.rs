@@ -3,7 +3,6 @@ use crate::project::Project;
 use crate::utils;
 
 use chrono::NaiveDateTime;
-use sqlite;
 use std::vec::Vec;
 
 #[derive(Debug)]
@@ -64,7 +63,7 @@ fn find_existing_task() -> Option<Task> {
         result = row_to_task(cursor.next());
     });
 
-    return result;
+    result
 }
 
 fn list_all_tasks(project: &Project) -> Vec<Task> {
@@ -89,7 +88,7 @@ fn list_all_tasks(project: &Project) -> Vec<Task> {
         results = rows_to_tasks(cursor);
     });
 
-    return results;
+    results
 }
 
 // This function will attempt to create a new task  and then
@@ -110,7 +109,7 @@ fn create_task(project: &Project, name: String) -> Option<Task> {
             ])
             .unwrap();
 
-        if let Ok(_) = cursor.next() {
+        if cursor.next().is_ok() {
             cursor = db
                 .prepare(
                     "
@@ -131,7 +130,7 @@ fn create_task(project: &Project, name: String) -> Option<Task> {
         }
     });
 
-    return result;
+    result
 }
 
 // This function will attempt to store the current context attaching
@@ -210,7 +209,7 @@ fn get_by_id(id: usize) -> Option<Task> {
         result = row_to_task(cursor.next());
     });
 
-    return result;
+    result
 }
 
 fn rows_to_tasks(mut cursor: sqlite::Cursor) -> Vec<Task> {
@@ -218,7 +217,8 @@ fn rows_to_tasks(mut cursor: sqlite::Cursor) -> Vec<Task> {
     while let Some(task) = row_to_task(cursor.next()) {
         results.push(task);
     }
-    return results;
+
+    results
 }
 
 fn row_to_task(row: Result<Option<&[sqlite::Value]>, sqlite::Error>) -> Option<Task> {

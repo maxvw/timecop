@@ -7,7 +7,7 @@ mod summary;
 mod task;
 mod utils;
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 use clap::{App, AppSettings, Arg, SubCommand};
 use state::State;
@@ -84,5 +84,5 @@ each commit you make how much time you think you spent on it.")
 
     // Execute the given command
     commands::exec(state)?;
-    return Ok(());
+    Ok(())
 }

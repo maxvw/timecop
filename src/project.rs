@@ -4,7 +4,6 @@ use crate::task::Task;
 use crate::utils;
 
 use chrono::NaiveDateTime;
-use sqlite;
 use std::vec::Vec;
 
 #[derive(Debug)]
@@ -63,7 +62,7 @@ fn find_existing_project() -> Option<Project> {
     };
 
     // Let's find this project in our database
-    return get_by_remote(remote);
+    get_by_remote(remote)
 }
 
 // This function will attempt to create a new project and then
@@ -81,7 +80,7 @@ fn create_project(remote: String, name: String) -> Option<Project> {
             .bind(&[sqlite::Value::String(name.to_string())])
             .unwrap();
 
-        if let Ok(_) = cursor.next() {
+        if cursor.next().is_ok() {
             cursor = db
                 .prepare(
                     "
@@ -102,7 +101,7 @@ fn create_project(remote: String, name: String) -> Option<Project> {
         }
     });
 
-    return result;
+    result
 }
 
 // This function will attempt to store the current context attaching
@@ -144,7 +143,7 @@ fn get_by_id(id: usize) -> Option<Project> {
         result = row_to_project(cursor.next());
     });
 
-    return result;
+    result
 }
 
 fn get_by_remote(remote: String) -> Option<Project> {
@@ -170,7 +169,7 @@ fn get_by_remote(remote: String) -> Option<Project> {
         result = row_to_project(cursor.next());
     });
 
-    return result;
+    result
 }
 
 fn list_all_projects() -> Vec<Project> {
@@ -190,7 +189,7 @@ fn list_all_projects() -> Vec<Project> {
         results = rows_to_projects(cursor);
     });
 
-    return results;
+    results
 }
 
 fn rows_to_projects(mut cursor: sqlite::Cursor) -> Vec<Project> {
@@ -198,7 +197,7 @@ fn rows_to_projects(mut cursor: sqlite::Cursor) -> Vec<Project> {
     while let Some(project) = row_to_project(cursor.next()) {
         results.push(project);
     }
-    return results;
+    results
 }
 
 fn row_to_project(row: Result<Option<&[sqlite::Value]>, sqlite::Error>) -> Option<Project> {
