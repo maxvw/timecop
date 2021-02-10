@@ -23,7 +23,7 @@ impl Task {
     }
 
     pub fn list_for(project: &Project) -> Vec<Task> {
-        list_all_tasks(project)
+        list_project_tasks(project)
     }
 
     pub fn add_to(project: &Project, name: String) -> Option<Task> {
@@ -70,7 +70,7 @@ fn find_existing_task() -> Option<Task> {
     result
 }
 
-fn list_all_tasks(project: &Project) -> Vec<Task> {
+fn list_project_tasks(project: &Project) -> Vec<Task> {
     let mut results: Vec<Task> = Vec::new();
 
     database::with_db(|db| {
