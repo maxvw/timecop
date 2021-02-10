@@ -46,9 +46,15 @@ pub fn exec<'a>(
     // Let's ask the user how many minutes they spent on this task
     let minutes = prompt_minutes();
 
-    // Write this log entry to the database
+    // Write this log entry to the database and touch the task
     if let Some(task) = &task {
         task.add_log(minutes, message);
+        task.touch()
+    }
+
+    // Also touch the project
+    if let Some(project) = &state.project {
+        project.touch()
     }
 
     // Assign task to state
