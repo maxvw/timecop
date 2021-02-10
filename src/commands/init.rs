@@ -131,7 +131,6 @@ fn install_git_hook() {
     }
 
     let hook_path = repo.unwrap().path().join("hooks/post-commit");
-    println!("{:?}", hook_path);
 
     if !prompt_install_hook() {
         return;
