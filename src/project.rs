@@ -46,6 +46,10 @@ impl Project {
     pub fn summary(&self) -> summary::Summary {
         summary::for_project(&self)
     }
+
+    pub fn touch(&self) {
+        touch_project(&self)
+    }
 }
 
 fn find_existing_project() -> Option<Project> {
@@ -118,6 +122,23 @@ fn save_context(project: &Project, remote: String) {
                 sqlite::Value::Integer(project.id as i64),
                 sqlite::Value::String(remote.to_string()),
             ])
+            .unwrap();
+
+        cursor.next().unwrap();
+    });
+}
+
+// This function will "touch" the project, updating it's "last updated" timestamp
+// Which should result in more usable sorted projects and tasks in the UI.
+fn touch_project(project: &Project) {
+    database::with_db(|db| {
+        let mut cursor = db
+            .prepare("UPDATE projects SET updated_at = DATETIME() WHERE id = ?;")
+            .unwrap()
+            .cursor();
+
+        cursor
+            .bind(&[sqlite::Value::Integer(project.id as i64)])
             .unwrap();
 
         cursor.next().unwrap();

@@ -37,6 +37,10 @@ impl Task {
     pub fn add_log(&self, minutes: usize, message: String) {
         save_task_log(&self, minutes, message)
     }
+
+    pub fn touch(&self) {
+        touch_task(&self)
+    }
 }
 
 fn find_existing_task() -> Option<Task> {
@@ -210,6 +214,23 @@ fn get_by_id(id: usize) -> Option<Task> {
     });
 
     result
+}
+
+// This function will "touch" the task, updating it's "last updated" timestamp
+// Which should result in more usable sorted projects and tasks in the UI.
+fn touch_task(task: &Task) {
+    database::with_db(|db| {
+        let mut cursor = db
+            .prepare("UPDATE tasks SET updated_at = DATETIME() WHERE id = ?;")
+            .unwrap()
+            .cursor();
+
+        cursor
+            .bind(&[sqlite::Value::Integer(task.id as i64)])
+            .unwrap();
+
+        cursor.next().unwrap();
+    });
 }
 
 fn rows_to_tasks(mut cursor: sqlite::Cursor) -> Vec<Task> {
