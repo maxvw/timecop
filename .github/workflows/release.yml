@@ -17,6 +17,7 @@ jobs:
         run: |
           export VERSION=$(echo ${{ github.ref }} | sed -e 's/[^0-9\.]//g')
           sed -i '' 's/version = "0.1.0"/version = "'${VERSION}'"/' Cargo.toml
+          export OPENSSL_STATIC=1
           cargo build --release
           echo ::set-output name=VERSION::${VERSION}
       - name: Archive
