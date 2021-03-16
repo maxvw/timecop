@@ -89,6 +89,7 @@ fn create_or_select_task(project: &Project) -> Option<Task> {
         .with_prompt("What would you like to do?")
         .default(0)
         .items(&options)
+        .paged(true)
         .interact()
     {
         Ok(0) => create_task(&project),
@@ -130,6 +131,7 @@ fn select_tasks(project: &Project, tasks: Vec<Task>) -> Option<Task> {
         .with_prompt("Select an existing task:")
         .default(0)
         .items(&task_names)
+        .paged(true)
         .interact()
         .unwrap();
 

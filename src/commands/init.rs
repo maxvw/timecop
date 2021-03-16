@@ -60,6 +60,7 @@ fn create_or_select_project() -> Option<Project> {
         .with_prompt("What would you like to do?")
         .default(0)
         .items(&options)
+        .paged(true)
         .interact()
     {
         Ok(0) => create_project(remote),
@@ -94,6 +95,7 @@ fn select_project(remote: String, projects: Vec<Project>) -> Option<Project> {
         .with_prompt("Select an existing project:")
         .default(0)
         .items(&project_names)
+        .paged(true)
         .interact()
         .unwrap();
 
