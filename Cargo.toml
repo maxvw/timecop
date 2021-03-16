@@ -5,7 +5,7 @@ authors = ["Max <code@workwithmax.com>"]
 edition = "2018"
 
 [dependencies]
-num = "0.3.1"
+num = "0.4.0"
 git2 = "0.13.17"
 termion = "1.5"
 sqlite = "0.25.3"
