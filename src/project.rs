@@ -78,7 +78,7 @@ fn create_project(remote: String, name: String) -> Option<Project> {
         let mut cursor = db
             .prepare("REPLACE INTO projects VALUES (null, ?, DATETIME(), DATETIME());")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::String(name.to_string())])
@@ -94,7 +94,7 @@ fn create_project(remote: String, name: String) -> Option<Project> {
                 ",
                 )
                 .unwrap()
-                .cursor();
+                .into_cursor();
 
             result = row_to_project(cursor.next());
 
@@ -115,7 +115,7 @@ fn save_context(project: &Project, remote: String) {
         let mut cursor = db
             .prepare("REPLACE INTO contexts VALUES (null, ?, null, ?, DATETIME(), DATETIME());")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[
@@ -135,7 +135,7 @@ fn touch_project(project: &Project) {
         let mut cursor = db
             .prepare("UPDATE projects SET updated_at = DATETIME() WHERE id = ?;")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::Integer(project.id as i64)])
@@ -157,7 +157,7 @@ fn get_by_id(id: usize) -> Option<Project> {
                 WHERE p.id = ?;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor.bind(&[sqlite::Value::Integer(id as i64)]).unwrap();
 
@@ -181,7 +181,7 @@ fn get_by_remote(remote: String) -> Option<Project> {
                 ORDER BY p.updated_at DESC;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::String(remote.to_string())])
@@ -205,7 +205,7 @@ fn list_all_projects() -> Vec<Project> {
                 ORDER BY p.updated_at DESC;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         results = rows_to_projects(cursor);
     });

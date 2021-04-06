@@ -20,7 +20,7 @@ pub fn set_ignore_flag() {
                 );",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::String(remote_branch.to_string())])
@@ -45,7 +45,7 @@ pub fn get_ignore_flag() -> bool {
                 ORDER BY i.updated_at DESC;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::String(remote_branch.to_string())])
