@@ -133,7 +133,7 @@ fn run_migrations() {
         let mut cursor = db
             .prepare("SELECT id FROM migrations ORDER BY id DESC LIMIT 1;")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         // Get the first result to calculate the next migration id
         let next_migration_id: usize = match cursor.next() {

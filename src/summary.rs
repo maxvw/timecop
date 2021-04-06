@@ -61,7 +61,7 @@ pub fn for_project(project: &Project) -> Summary {
                     ORDER BY DATE(l.inserted_at) DESC, t.id DESC;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::Integer(project.id as i64)])

@@ -58,7 +58,7 @@ fn find_existing_task() -> Option<Task> {
                 ORDER BY t.updated_at DESC;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::String(remote_branch.to_string())])
@@ -83,7 +83,7 @@ fn list_project_tasks(project: &Project) -> Vec<Task> {
                 ORDER BY t.updated_at DESC;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::Integer(project.id as i64)])
@@ -104,7 +104,7 @@ fn create_task(project: &Project, name: String) -> Option<Task> {
         let mut cursor = db
             .prepare("REPLACE INTO tasks VALUES (null, ?, ?, DATETIME(), DATETIME());")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[
@@ -123,7 +123,7 @@ fn create_task(project: &Project, name: String) -> Option<Task> {
                 ",
                 )
                 .unwrap()
-                .cursor();
+                .into_cursor();
 
             result = row_to_task(cursor.next());
 
@@ -158,7 +158,7 @@ fn save_task_log(task: &Task, minutes: usize, message: String) {
                 );",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[
@@ -180,7 +180,7 @@ fn save_context(project: &Project, task: &Task) {
         let mut cursor = db
             .prepare("REPLACE INTO contexts VALUES (null, ?, ?, ?, DATETIME(), DATETIME());")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[
@@ -206,7 +206,7 @@ fn get_by_id(id: usize) -> Option<Task> {
                 WHERE t.id = ?;",
             )
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor.bind(&[sqlite::Value::Integer(id as i64)]).unwrap();
 
@@ -223,7 +223,7 @@ fn touch_task(task: &Task) {
         let mut cursor = db
             .prepare("UPDATE tasks SET updated_at = DATETIME() WHERE id = ?;")
             .unwrap()
-            .cursor();
+            .into_cursor();
 
         cursor
             .bind(&[sqlite::Value::Integer(task.id as i64)])
