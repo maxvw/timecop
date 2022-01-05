@@ -1,3 +1,6 @@
+# ARCHIVED
+I have archived this project as I ended up not using it.
+
 # Timecop
 A small utility to help you keep track of time.
 
